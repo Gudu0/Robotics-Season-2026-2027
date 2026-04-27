@@ -8,7 +8,8 @@ import javafx.util.pair;
 
 public class StateBasedMachine {
 	// Declare OpMode members.
-private list<
+private List<Map.Entry<String, Integer>> list = new ArrayList<>();
+list.add(new AbstractMap.SimpleEntry<>("motor1", 50));
 	public void init() {
 	}
   
