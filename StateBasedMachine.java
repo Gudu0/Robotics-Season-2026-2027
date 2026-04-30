@@ -1,30 +1,40 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import java.lang.reflect.Array;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import java.util.ArrayList;
 import java.util.Collections;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import javafx.util.pair;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class StateBasedMachine {
-	//Operation list are the objects currently active
-	private String[] object;
-	//Time list is the time in miliseconds when the corresponding object needs to be turned off
-	private String[] time;
-	private String[] resetType;
-	private int[] resetState;
 
-	public void AddSBM(String object, int length, int runtime, String Type, int State) {
+	// HardwareDevice to allow for servos and motors, both implement it.
+	private ArrayList<HardwareDevice> objects = new ArrayList<HardwareDevice>();
+	
+	//Time list is the time in miliseconds when the corresponding object needs to be turned off
+	private ArrayList<Double> finishTime = new ArrayList<Double>();
+	
+	//ResetState is the value to set the hardware device to after the time is up - usually a default servo position or 0 for motors
+	private ArrayList<Float> resetState = new ArrayList<Float>();
+
+	//Used by other files to add objects and their timers to the SBM checklist
+	public void AddSBM(HardwareDevice object, double length, double runtime, String Type, float State) {
 		
 	}
 	
-	public void checkSBM(int runtime) {
-		for (int i = 0; i=operations.length; i++) {
-			if (time[i]>runtime) {
-				if (resetType[i]="Motor") {
-					object[i].setPower(resetState[i]);
+	public void checkSBM(double runtime) {
+		//go through all objects in sbm
+		for (int i = 0; i > objects.size(); i++) {
+			// if the current time is past the object's finish time 
+			if (finishTime.get(i) > runtime) {
+				// possibly change this to switch statement
+				if (objects.get(i) instanceof DcMotor) {
+					DcMotor temp = (DcMotor) objects.get(i);
+					temp.setPower(resetState.get(i));
 				}
 			}
 		}
