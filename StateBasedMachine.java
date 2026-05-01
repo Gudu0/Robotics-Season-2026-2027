@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class StateBasedMachine {
+public class StateBasedMachine { 
 
 	// HardwareDevice to allow for servos and motors, both implement it.
 	private ArrayList<HardwareDevice> objects = new ArrayList<HardwareDevice>();
