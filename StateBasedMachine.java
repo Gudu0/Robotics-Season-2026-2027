@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import java.lang.reflect.Array;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -8,35 +9,61 @@ import java.util.ArrayList;
 import java.util.Collections;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class StateBasedMachine {
 
-	// HardwareDevice to allow for servos and motors, both implement it.
-	private ArrayList<HardwareDevice> objects = new ArrayList<HardwareDevice>();
-	
-	//Time list is the time in miliseconds when the corresponding object needs to be turned off
-	private ArrayList<Double> finishTime = new ArrayList<Double>();
-	
-	//ResetState is the value to set the hardware device to after the time is up - usually a default servo position or 0 for motors
-	private ArrayList<Float> resetState = new ArrayList<Float>();
+	public enum RESET_CODES {
+		MOTOR,
+		SERVO,
+		OTHER
+	}
 
-	//Used by other files to add objects and their timers to the SBM checklist
-	public void AddSBM(HardwareDevice object, double length, double runtime, String Type, float State) {
-		
+	// stateBasedMachineObject
+	private class SBM_O {
+		private HardwareDevice device;
+		private double finishTime;
+		private RESET_CODES resetCode;
+
+		public SBM_O(HardwareDevice device, double finishTime, RESET_CODES resetCode) {
+			this.device = device;
+			this.finishTime = finishTime;
+			this.resetCode = resetCode;
+		}
+	}
+
+	// stateBasedMachineObjects
+	private ArrayList<SBM_O> SBMO = new ArrayList<>();
+
+
+	// Used by other files to add objects and their timers to the SBM checklist
+	public void AddSBM(HardwareDevice object, double finishTime, RESET_CODES resetCode) {
+		SBMO.add(new SBM_O(object, finishTime, resetCode));
 	}
 	
 	public void checkSBM(double runtime) {
-		//go through all objects in sbm
-		for (int i = 0; i > objects.size(); i++) {
+		ArrayList<SBM_O> removed = new ArrayList<>();
+		//go through all objects in SBMO
+		// foreach loop
+		for (SBM_O object : SBMO) {
 			// if the current time is past the object's finish time 
-			if (finishTime.get(i) > runtime) {
+			if (object.finishTime <= runtime) {
+
+				// This is where the doing happens after the timer expires. 
+
+
 				// possibly change this to switch statement
-				if (objects.get(i) instanceof DcMotor) {
-					DcMotor temp = (DcMotor) objects.get(i);
-					temp.setPower(resetState.get(i));
+				if (object.device instanceof DcMotor) {
+					DcMotor temp = (DcMotor) object.device;
+					temp.setPower(0.0d);
+				} else if (object.device instanceof Servo){
+					Servo temp = (Servo) object.device;
+					temp.setPosition(0.0d);
 				}
+				removed.add(object);
 			}
+		}
+		for (SBM_O e : removed){
+			SBMO.remove(e);
 		}
 	}
 }
